@@ -1,0 +1,58 @@
+services:
+#  user_service_test:
+#    container_name: user_services_test
+#    image: trustflow_user_service_test
+#    build: ./services/user_service
+#    command: sh -c "python manage.py migrate && gunicorn user_services.wsgi:application --bind 0.0.0.0:8001"
+#    volumes:
+#      - ./services/user_service:/app
+#    ports:
+#      - "8001:8001"
+#    env_file:
+#      - .env
+#    depends_on:
+#      - user_service_db_test
+
+  user_service_db_test:
+    container_name: user_service_db_test
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ${USER_SERVICE_DB_NAME}
+      POSTGRES_USER: ${USER_SERVICE_DB_USER}
+      POSTGRES_PASSWORD: ${USER_SERVICE_DB_PASSWORD}
+    ports:
+      - "${USER_SERVICE_DB_PORT}:5432"
+    volumes:
+      - postgres_data_test:/var/lib/postgresql/data/
+
+#  transaction_service_test:
+#    container_name: transaction_service_test
+#    image: trustflow_transaction_service_test
+#    build: ./services/transaction_service
+#    command: sh -c "python manage.py migrate && gunicorn transaction_service.wsgi:application --bind 0.0.0.0:8002"
+#    volumes:
+#      - ./services/transaction_service:/app
+#    ports:
+#      - "8002:8002"
+#    env_file:
+#      - .env
+#    depends_on:
+#      - transaction_service_db_test
+
+  transaction_service_db_test:
+    container_name: transaction_service_db_test
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ${TRANSACTION_SERVICE_DB_NAME}
+      POSTGRES_USER: ${TRANSACTION_SERVICE_DB_USER}
+      POSTGRES_PASSWORD: ${TRANSACTION_SERVICE_DB_PASSWORD}
+    ports:
+      - "${TRANSACTION_SERVICE_DB_PORT}:5432"
+    volumes:
+      - transaction_postgres_data_test:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data_test:
+  transaction_postgres_data_test:
