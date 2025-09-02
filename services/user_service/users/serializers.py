@@ -29,3 +29,7 @@ class LoginResponseSerializer(serializers.Serializer):
 
 class LoginErrorResponseSerializer(serializers.Serializer):
     detail = serializers.CharField()
+
+
+class RefreshTokenRequestSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()

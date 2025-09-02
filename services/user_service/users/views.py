@@ -1,3 +1,4 @@
+from tokenize import TokenError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,7 +11,7 @@ from .serializers import (
     UserSerializer,
     LDAPLoginRequestSerializer,
     LoginResponseSerializer,
-    LoginErrorResponseSerializer,
+    LoginErrorResponseSerializer, RefreshTokenRequestSerializer,
 )
 
 
@@ -107,3 +108,57 @@ class LoginAPIView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class RefreshTokenAPIView(APIView):
+    @extend_schema(
+        request=RefreshTokenRequestSerializer,
+        responses={
+            200: LoginResponseSerializer,
+            401: {"description": "Invalid or expired refresh token"},
+        },
+        examples=[
+            OpenApiExample(
+                "Successful token refresh",
+                summary="New access token",
+                value={
+                    "access_token": "new_access_token_here",
+                    "refresh_token": "refresh_token_here",
+                },
+                response_only=True,
+                status_codes=["200"],
+            ),
+            OpenApiExample(
+                "Invalid token",
+                summary="Refresh token failed",
+                value={"detail": "Invalid or expired refresh token"},
+                response_only=True,
+                status_codes=["401"],
+            ),
+        ],
+        description="Refresh JWT access token using a valid refresh token",
+        summary="Refresh access token",
+        tags=["Authentication"],
+    )
+    def post(self, request):
+        serializer = RefreshTokenRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        refresh_token = serializer.validated_data["refresh_token"]
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            new_access_token = str(refresh.access_token)
+
+            return Response({
+                "access_token": new_access_token,
+                "refresh_token": refresh_token,
+            },
+                status=status.HTTP_200_OK,
+            )
+
+        except TokenError:
+            return Response(
+                {"detail": "Invalid or expired refresh token"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )

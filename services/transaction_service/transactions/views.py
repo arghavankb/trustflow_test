@@ -1,8 +1,4 @@
-import jwt
-from django.conf import settings
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
 from .authentication import JWTUserServiceAuthentication
 from .models import Transaction
 from .serializers import TransactionSerializer
