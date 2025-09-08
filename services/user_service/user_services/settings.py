@@ -30,7 +30,11 @@ SECRET_KEY = "django-insecure-3+52^vugd%in+!fby236$5j+346lldnvcrk1yl#jqrqa$6u(lz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    os.getenv("HOST_IP")
+]
 
 
 # Application definition
@@ -42,12 +46,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "corsheaders",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "users",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -163,3 +169,10 @@ SIMPLE_JWT = {
 #     "users.backends.LDAPBackend",
 #     "django.contrib.auth.backends.ModelBackend",
 # )
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8003",
+    "http://127.0.0.1:8003"
+]
+
