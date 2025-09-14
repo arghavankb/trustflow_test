@@ -1,6 +1,7 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from .models import Transaction
@@ -12,6 +13,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
     authentication_classes = [JWTUserServiceAuthentication]
     permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
 
     @extend_schema(
         summary="Create Transaction",
