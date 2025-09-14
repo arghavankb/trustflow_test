@@ -1,5 +1,6 @@
 from rest_framework.exceptions import ValidationError
-from rest_framework import viewsets
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter
@@ -9,7 +10,7 @@ from .serializers import TransactionSerializer
 from .authentication import JWTUserServiceAuthentication
 
 
-class TransactionViewSet(viewsets.ModelViewSet):
+class TransactionViewSet(CreateModelMixin, ListModelMixin, GenericViewSet):
     serializer_class = TransactionSerializer
     authentication_classes = [JWTUserServiceAuthentication]
     permission_classes = [IsAuthenticated]
@@ -94,4 +95,4 @@ class TransactionViewSet(viewsets.ModelViewSet):
         if partner_name is not None:
             queryset = queryset.filter(partner__name=partner_name)
 
-        return queryset
+        return queryset.order_by("id")
