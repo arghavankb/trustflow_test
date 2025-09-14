@@ -4,7 +4,7 @@ from django.urls import path, include
 
 
 router = DefaultRouter()
-router.register(r"transactions", TransactionViewSet)
+router.register("transactions", TransactionViewSet, basename="transactions")
 
 urlpatterns = [
     path('', include(router.urls)),
