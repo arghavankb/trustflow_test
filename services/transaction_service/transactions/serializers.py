@@ -1,5 +1,6 @@
 from .models import Transaction, Service, Partner
 from rest_framework import serializers
+from datetime import datetime
 
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -24,6 +25,14 @@ class TransactionSerializer(serializers.ModelSerializer):
     partner_id = serializers.PrimaryKeyRelatedField(
         queryset=Partner.objects.all(), source="partner", write_only=True
     )
+
+    def validate_transaction_date(self, value):
+        input_date = self.initial_data.get("transaction_date")
+        try:
+            datetime.strptime(input_date, "%Y-%m-%d")
+        except ValueError:
+            raise serializers.ValidationError("Invalid date format. Use YYYY-MM-DD.")
+        return value
 
     class Meta:
         model = Transaction
