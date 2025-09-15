@@ -8,6 +8,7 @@ from drf_spectacular.types import OpenApiTypes
 from .models import Transaction
 from .serializers import TransactionSerializer
 from .authentication import JWTUserServiceAuthentication
+from datetime import datetime
 
 
 class TransactionViewSet(CreateModelMixin, ListModelMixin, GenericViewSet):
@@ -85,7 +86,12 @@ class TransactionViewSet(CreateModelMixin, ListModelMixin, GenericViewSet):
         if transaction_date is None:
             raise ValidationError({"transaction_date": "This query parameter is required."})
 
-        queryset = Transaction.objects.filter(transaction_date=transaction_date)
+        try:
+            parsed_transaction_date = datetime.strptime(transaction_date, "%Y-%m-%d").date()
+        except ValueError:
+            raise ValidationError({"transaction_date": "Invalid format. Use YYYY-MM-DD."})
+
+        queryset = Transaction.objects.filter(transaction_date=parsed_transaction_date)
 
         partner_name = self.request.query_params.get("partner_name")
         service_name = self.request.query_params.get("service_name")
